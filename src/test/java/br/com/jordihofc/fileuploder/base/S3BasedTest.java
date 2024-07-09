@@ -4,10 +4,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.web.multipart.MultipartFile;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
 import static org.testcontainers.containers.localstack.LocalStackContainer.Service.S3;
@@ -31,5 +36,48 @@ public abstract class S3BasedTest {
                 () -> LOCALSTACK_CONTAINER.getAccessKey().toString());
         registry.add("spring.cloud.aws.credentials.secret-key",
                 () -> LOCALSTACK_CONTAINER.getSecretKey().toString());
+    }
+
+    protected MultipartFile createCorruptedFile() {
+        return new MultipartFile() {
+            @Override
+            public String getName() {
+                return null;
+            }
+
+            @Override
+            public String getOriginalFilename() {
+                return null;
+            }
+
+            @Override
+            public String getContentType() {
+                return null;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public long getSize() {
+                return 0;
+            }
+
+            @Override
+            public byte[] getBytes() throws IOException {
+                return new byte[0];
+            }
+
+            @Override
+            public InputStream getInputStream() throws IOException {
+                throw new IOException("Error ao abrir o arquivo");
+            }
+
+            @Override
+            public void transferTo(File dest) throws IOException, IllegalStateException {
+            }
+        };
     }
 }
