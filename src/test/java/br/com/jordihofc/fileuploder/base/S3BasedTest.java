@@ -19,7 +19,7 @@ public abstract class S3BasedTest {
     @Container
     static LocalStackContainer LOCALSTACK_CONTAINER = new LocalStackContainer(
             DockerImageName.parse("localstack/localstack")
-    );
+    ).withServices(S3);
 
     @DynamicPropertySource
     static void registerS3Properties(DynamicPropertyRegistry registry) {

@@ -27,7 +27,7 @@ class FileStorageServiceUnitTest {
         //cenario
         MultipartFile file = Mockito.mock(MultipartFile.class);
         FileUpload fileUpload = new FileUpload(file);
-        FileStorageService fileStorageService = new FileStorageService(s3Template,bucketName);
+        FileStorageService fileStorageService = new FileStorageService(s3Template, bucketName);
 
         //acao
         String acesseKeyFile = fileStorageService.upload(fileUpload);
@@ -35,7 +35,6 @@ class FileStorageServiceUnitTest {
         //validacao
         assertNotNull(acesseKeyFile);
     }
-
     @Test
     @DisplayName("Nao deve fazer o upload de um arquivo caso tenha algum problema em sua abertura")
     void t1() throws IOException {
@@ -43,14 +42,13 @@ class FileStorageServiceUnitTest {
         MultipartFile file = Mockito.mock(MultipartFile.class);
         Mockito.when(file.getInputStream()).thenThrow(IOException.class);
         FileUpload fileUpload = new FileUpload(file);
-        FileStorageService fileStorageService = new FileStorageService(s3Template,bucketName);
+        FileStorageService fileStorageService = new FileStorageService(s3Template, bucketName);
 
         //acao e validacao
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
             String acesseKeyFile = fileStorageService.upload(fileUpload);
 
         });
-        assertNotNull(runtimeException.getMessage());
         assertEquals("Não foi possivel realizar o upload do documento", runtimeException.getMessage());
     }
 }
